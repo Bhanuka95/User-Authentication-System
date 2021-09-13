@@ -1,10 +1,11 @@
 #include<iostream>
+#include<fstream>
 #include<string>
 using namespace std;
 
 class loginManager{
     private:
-    string userName="Bhanuka", password="1995";
+    string userName, password;
     bool accessGranted;
 
     public:
@@ -12,21 +13,45 @@ class loginManager{
         string pwdAttempt;
         loginManager();
         void login();
+        string retrieveFile(const char* p_fileName);
 };
 
 loginManager::loginManager(){
     accessGranted = false;
 }
 void loginManager::login(){
-    printf("Enter your username: \n");
+    printf("\nEnter your username: \n");
     cin >> usernameAttempt;
+    userName = retrieveFile("users.dat");
     if(usernameAttempt == userName){
-        printf("Enter the password: \n");
+        printf("\nEnter the password: \n");
         cin >>pwdAttempt;
+        password = retrieveFile("pswds.dat");
         if(pwdAttempt == password){
             printf("You are authenticated as: %s", userName.c_str());
         }
+        else{
+            printf("Sorry!!! You are not authenticated!");
+            login();
+        }
     }
+    else{
+        printf("Sorry!!! User: %s Doesn't exist!", usernameAttempt.c_str());
+        login();
+    }
+        
+}
+//retrieve passwords and usernames from text file
+string loginManager::retrieveFile(const char* p_fileName){
+    string line;
+    fstream file;
+
+    file.open(p_fileName, ios::in);
+    if(file.is_open()){
+        getline(file, line);
+    }
+    file.close();
+    return line;
 }
 
 int main(){
