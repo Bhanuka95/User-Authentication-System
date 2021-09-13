@@ -14,6 +14,9 @@ class loginManager{
         loginManager();
         void login();
         string retrieveFile(const char* p_fileName);
+        int encrypt(int p_letter);
+        int decrypt(int p_letter);
+        void saveFile(string p_line, const char* p_fileName);
 };
 
 loginManager::loginManager(){
@@ -46,17 +49,46 @@ string loginManager::retrieveFile(const char* p_fileName){
     string line;
     fstream file;
 
+    int eChar;
+
     file.open(p_fileName, ios::in);
-    if(file.is_open()){
-        getline(file, line);
+    while(1){
+        file >> eChar;
+        if(eChar == 0){
+            file.close();
+            return line;
+        }
+        line += (char)decrypt(eChar);
     }
+    
+}
+//encryption
+int loginManager::encrypt(int p_letter){
+    return p_letter + 3;
+}
+//decryption
+int loginManager::decrypt(int p_letter){
+    return p_letter -3;
+}
+
+void loginManager::saveFile(string p_line, const char* p_fileName){
+    fstream file;
+    file.open(p_fileName, ios::out);
+
+    for(int i=0; i<p_line.length(); i++){
+        file << encrypt(p_line[i]);
+        file << "\n";
+    }
+    file << "0";
     file.close();
-    return line;
 }
 
 int main(){
     loginManager usr1;
+    // usr1.saveFile("GrapeJuice", "pswds.dat");
+    // cout << usr1.retrieveFile("pswds.dat") << endl;
     usr1.login();
+    
 
     return 0;
 }
